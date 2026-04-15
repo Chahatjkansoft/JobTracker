@@ -9,7 +9,7 @@ const applicationRoutes = require("./routes/applicationRoutes");
 
 const app = express();
 
-app.use(cors({origin:"https://jobtracker-frontend-fy5m.onrender.com"}));
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
