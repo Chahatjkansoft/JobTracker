@@ -7,7 +7,8 @@ const CreateCompany = () => {
     });
     const { companyName, contactEmail, contactPhone, contactName } = formData;
     const [errorMsg, setErrorMsg] = useState("");
-    const handleChange = async (e) => {
+    const [loading, setLoading] = useState(false);
+    const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -20,24 +21,34 @@ const CreateCompany = () => {
                 setErrorMsg("Enter All Values");
                 return;
             }
+            if (!/\S+@\S+\.\S+/.test(contactEmail)) {
+                return setErrorMsg("Enter a valid email address");
+            }
+            //on this later 
+            // if (!/^\d{10}$/.test(contactPhone)) {
+            //     return setErrorMsg("Enter a valid 10-digit phone number");
+            // }
             var companyData = {
                 companyName,
                 contactEmail,
                 contactPhone,
                 contactName
             }
+            setLoading(true);
             const res = await api.post("/company/create", companyData);
             console.log("company saved=>", res);
             setErrorMsg("Record Saved");
             setFormData({companyName: "", contactEmail: "", contactPhone: "", contactName: ""});
-            setTimeout(()=>{setErrorMsg("")},4000);
+            // setTimeout(()=>{setErrorMsg("")},4000);
         }
         catch (error) {
             console.log("Error in add-company", error?.response);
             var message = error?.response?.data?.message || "Error in creating Company";
             setErrorMsg(message);
         }
+        finally{setLoading(true);}
     };
+    if (loading) return <p>Loading...</p>;
     return (
         <div>
             <h2>Company</h2>
@@ -46,7 +57,7 @@ const CreateCompany = () => {
                 <input type="text" placeholder="Enter Employee Name" onChange={handleChange} value={contactName} name="contactName" /><br/>
                 <input type="text" placeholder="Enter Employee Email" onChange={handleChange} value={contactEmail} name="contactEmail" /><br/>
                 <input type="text" placeholder="Enter Employee Phone" onChange={handleChange} value={contactPhone} name="contactPhone" /><br/>
-                <button type="submit">Submit</button><br/>
+                <button disabled={loading} type="submit">{loading ? "Submitting..." : "Submit"}</button><br/>
             </form>
             {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
         </div>

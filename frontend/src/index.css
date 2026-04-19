@@ -1,12 +1,4 @@
-/* Ensure full height for proper centering */
-html, body, #root {
-  height: 100%;
-  width: 100%;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Center the actual app container */
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}

@@ -62,9 +62,16 @@ const Dashboard = () => {
     const handleBlur = async (e) => {
         fetchMyDashboardData(decodedData.userId, status, e.target.value);
     };
+    const handleLogout = async (e)=>{
+        e.preventDefault();
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+    }
+
     return (
         <div>
-            <h2>Welcome {loginRole}</h2>
+            <button type="submit" onClick={handleLogout}>Logout</button>
+            <h2 className="">Welcome {loginRole}</h2>
             <div>
                 <label> Applied: {statusCount.applied}</label>
                 <label> Interview: {statusCount.interview}</label>
