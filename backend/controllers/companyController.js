@@ -3,7 +3,7 @@ const Company = require("../models/Company");
 const createCompany = async (req, res) => {
     try {
         const { companyName, contactEmail, contactPhone, contactName } = req.body;
-        if (!companyName || !contactEmail || !contactPhone || !contactName) {
+        if (!companyName || !contactEmail || !contactName) {
             return res.status(400).json({ message: "Enter all values" });
         }
         var checkEmail = await Company.findOne({ contactEmail: contactEmail });

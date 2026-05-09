@@ -1,10 +1,8 @@
-import React, { useState } from "react"
+﻿import React, { useState } from "react"
 import api from "../services/api"
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
+import { Link } from "react-router-dom";
 
 const Login = () => {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -31,30 +29,42 @@ const Login = () => {
             });
             if (res.data.token) {
                 localStorage.setItem("token", res.data.token);
-                var decodeToken = jwtDecode(res.data.token);
-                console.log("Decoded Token=>",decodeToken)
-                // navigate("/dashboard");
                 window.location.href = "/dashboard";
             }
         }
         catch (error) {
-
-            console.log("Error in register", error.response);
-            const message = error?.response?.data?.message || "Something Went Wrong";
-            // alert(error.response.data.message);
+            const message = error?.response?.data?.message || "Something went wrong";
             setErrorMsg(message);
         }
-
     };
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Enter Email or User Name" onChange={handleChange} value={emailName} name="emailName" />
-                <input type="password" placeholder="Enter Password" onChange={handleChange} value={password} name="password" />
-                <button type="submit">Login</button>
-            </form>
-            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+                <h2 className="text-3xl font-semibold text-slate-900 mb-6">Login</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="text"
+                        placeholder="Enter Email or User Name"
+                        onChange={handleChange}
+                        value={emailName}
+                        name="emailName"
+                        className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+                    />
+                    <input
+                        type="password"
+                        placeholder="Enter Password"
+                        onChange={handleChange}
+                        value={password}
+                        name="password"
+                        className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+                    />
+                    <button type="submit" className="w-full rounded-xl bg-slate-900 px-4 py-3 text-white font-medium hover:bg-slate-700">Login</button>
+                </form>
+                {errorMsg && <p className="mt-4 text-sm text-red-600">{errorMsg}</p>}
+                <p className="mt-6 text-sm text-slate-600">
+                    Don't have an account? <Link to="/register" className="text-slate-900 font-semibold">Register</Link>
+                </p>
+            </div>
         </div>
     );
 }
