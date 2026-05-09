@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+﻿import React, { useState, useEffect } from "react"
 import api from "../services/api";
 import { jwtDecode } from "jwt-decode";
 
@@ -8,14 +8,12 @@ const Dashboard = () => {
     const [decodedData, setdecodedData] = useState();
     const [compName, setCompName] = useState("");
     const [status, setstatus] = useState("All");
+
     const fetchMyDashboardData = async (userId, status = "All", companyName = "") => {
         try {
-            if (!userId) {
-                console.log("User Id Not Found");
-                return;
-            }
-            var data = await api.get("/application/get", { params: { Status: status, Name: companyName } });
-            setApplications(data.data.data)
+            if (!userId) return;
+            const data = await api.get("/application/get", { params: { Status: status, Name: companyName } });
+            setApplications(data.data.data);
             const count = {
                 applied: 0,
                 interview: 0,
@@ -23,35 +21,36 @@ const Dashboard = () => {
                 offer: 0
             };
             data.data.data.forEach((item) => {
-                const status = item.Status?.toLowerCase();
-                if (count.hasOwnProperty(status)) {
-                    count[status] += 1;
+                const itemStatus = item.Status?.toLowerCase();
+                if (count.hasOwnProperty(itemStatus)) {
+                    count[itemStatus] += 1;
                 }
             });
             setStatusCount(count);
         }
         catch (error) {
-            return;
+            console.log("Dashboard load error", error);
         }
     };
+
     const [loginRole, setLoginRole] = useState("User");
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return;
         const decoded = jwtDecode(token);
         setdecodedData(decoded);
-        setLoginRole(decoded.role);
+        setLoginRole(decoded.role || "User");
         fetchMyDashboardData(decoded.userId);
-
     }, []);
+
     const statusChangeHandle = async (Id, e) => {
         try {
             const changeStatus = e.target.value;
-            var data = await api.put("/application/updateStatus/" + Id, { status:changeStatus });
+            await api.put("/application/updateStatus/" + Id, { status: changeStatus });
             fetchMyDashboardData(decodedData.userId, status, compName);
         }
         catch (error) {
-            console.log("Update status Error=>", error.response.data);
+            console.log("Update status error", error?.response || error);
         }
     };
 
@@ -62,64 +61,97 @@ const Dashboard = () => {
     const handleBlur = async (e) => {
         fetchMyDashboardData(decodedData.userId, status, e.target.value);
     };
-    const handleLogout = async (e)=>{
-        e.preventDefault();
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-    }
 
     return (
-        <div>
-            <button type="submit" onClick={handleLogout}>Logout</button>
-            <h2 className="">Welcome {loginRole}</h2>
-            <div>
-                <label> Applied: {statusCount.applied}</label>
-                <label> Interview: {statusCount.interview}</label>
-                <label> Rejected: {statusCount.rejected}</label>
-                <label> Offer: {statusCount.offer}</label>
+        <main className="min-h-screen bg-slate-50 px-4 py-6">
+            <div className="mx-auto max-w-6xl space-y-6">
+                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-3xl font-semibold text-slate-900">Welcome back</h1>
+                            <p className="text-sm text-slate-500">You are logged in as <strong className="text-slate-900">{loginRole}</strong>.</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            {['Applied','Interview','Rejected','Offer'].map((label) => (
+                                <div key={label} className="rounded-2xl bg-slate-50 p-4 text-center">
+                                    <div className="text-sm text-slate-500">{label}</div>
+                                    <div className="mt-2 text-2xl font-semibold text-slate-900">{statusCount[label.toLowerCase()] || 0}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-wrap gap-3 items-center">
+                            {['All','applied','interview','rejected','offer'].map((item) => (
+                                <label key={item} className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                                    <input
+                                        type="radio"
+                                        className="h-4 w-4 text-slate-900"
+                                        name="statusFilter"
+                                        value={item}
+                                        checked={status === item}
+                                        onChange={handleClick}
+                                    />
+                                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                                </label>
+                            ))}
+                        </div>
+                        <div className="max-w-xs">
+                            <input
+                                type="text"
+                                onBlur={handleBlur}
+                                onChange={(e) => setCompName(e.target.value)}
+                                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+                                value={compName}
+                                placeholder="Filter by company name"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                <section className="overflow-x-auto rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead className="bg-slate-50 text-slate-600">
+                            <tr>
+                                {['#','Company','Contact','Status','Updated On','Action'].map((label) => (
+                                    <th key={label} className="px-4 py-3 text-left font-medium">{label}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200 bg-white">
+                            {applications.length > 0 ? applications.map((company, index) => (
+                                <tr key={company._id} className="hover:bg-slate-50">
+                                    <td className="px-4 py-4">{index + 1}</td>
+                                    <td className="px-4 py-4">{company.CompanyId.companyName}</td>
+                                    <td className="px-4 py-4">{company.CompanyId.contactName}</td>
+                                    <td className="px-4 py-4">{company.Status}</td>
+                                    <td className="px-4 py-4">{company.AppliedDate}</td>
+                                    <td className="px-4 py-4">
+                                        <select
+                                            value={company.Status.toLowerCase()}
+                                            className="rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900"
+                                            onChange={(e) => statusChangeHandle(company._id, e)}
+                                        >
+                                            <option value="applied">Applied</option>
+                                            <option value="interview">Interviewed</option>
+                                            <option value="rejected">Rejected</option>
+                                            <option value="offer">Offer</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan="6" className="px-4 py-8 text-center text-slate-500">No data found.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </section>
             </div>
-            <br></br>
-            <div>
-                <label><input className="statusCls" type="radio" defaultChecked name="statusFilter" value="All" onClick={handleClick} />All</label>
-                <label><input className="statusCls" type="radio" name="statusFilter" value="applied" onClick={handleClick} />Applied</label>
-                <label><input className="statusCls" type="radio" name="statusFilter" value="interview" onClick={handleClick} />Interview</label>
-                <label><input className="statusCls" type="radio" name="statusFilter" value="rejected" onClick={handleClick} />Rejected</label>
-                <label><input className="statusCls" type="radio" name="statusFilter" value="offer" onClick={handleClick} />Offer</label>
-                &nbsp;&nbsp;&nbsp;<input type="text" onBlur={handleBlur} onChange={(e) => setCompName(e.target.value)} className="nameCls" value={compName} placeholder="Enter Company Name" />
-            </div>
-            <table border="1" cellPadding="10">
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Company</td>
-                        <td>Contact</td>
-                        <td>Status</td>
-                        <td>Updated On</td>
-                        <td>Action</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {applications.length > 0 ? applications.map((company, index) => {
-                        return (
-                            <tr key={company._id}>
-                                <td>{index + 1}</td>
-                                <td>{company.CompanyId.companyName}</td>
-                                <td>{company.CompanyId.contactName}</td>
-                                <td>{company.Status}</td>
-                                <td>{company.AppliedDate}</td>
-                                <td>
-                                    <select value={company.Status.toLowerCase()} className="appliStatusCls" onChange={(e) => statusChangeHandle(company._id, e)}>
-                                        <option value="applied">Applied</option>
-                                        <option value="interview">Interviewed</option>
-                                        <option value="rejected">Rejected</option>
-                                        <option value="offer">Offer</option>
-                                    </select>
-                                </td>
-                            </tr>);
-                    }) : <tr><td colSpan="6">No Data Found</td></tr>}
-                </tbody>
-            </table>
-        </div>
+        </main>
     );
 };
 

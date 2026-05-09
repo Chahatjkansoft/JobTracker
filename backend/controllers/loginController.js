@@ -7,9 +7,10 @@ const loginUser = async (req, res) => {
     if (!emailName || !password) {
       return res.status(400).json({ message: "Enter all required values" });
     }
-    var emailNameData = emailName.trim().toLowerCase();
+    var emailNameData = emailName.trim();
     
-    var userData = await User.findOne({ $or: [{ email: emailNameData }, { name: emailNameData }] }).select("+password");
+    var userData = await User.findOne({ $or: [{ email: emailNameData }, 
+      { name: emailNameData }] }).select("+password");
 
     if (userData) {
       var checkPass = await userData.comparePassword(password);

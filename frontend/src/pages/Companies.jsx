@@ -1,46 +1,36 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import api from "../services/api";
 
-// Popup Component
-const ApplyAtCompany = ({ id, onClose,refresh }) => {
+const ApplyAtCompany = ({ id, onClose, refresh }) => {
     const [applyDate, setApplyDate] = useState("");
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (!applyDate) {
-                alert("Enter Date");
-                return;
-            }
-            var data = {
-                companyId: id,
-                date: applyDate
-            }
-            const res = await api.post("/application/create", data);
-            console.log("Applied,", res);
+            if (!applyDate) return;
+            await api.post("/application/create", { companyId: id, date: applyDate });
             refresh();
             onClose();
         }
         catch (error) {
-            console.log("Apply error=>", error.response);
+            console.log("Apply error=>", error?.response || error);
             onClose();
         }
     }
     return (
-        <div style={{
-            position: "fixed", top: "0", left: "0",
-            width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex", justifyContent: "center", alignItems: "center"
-        }}>
-            <div style={{
-                background: "#fff", padding: "20px", borderRadius: "8px", minWidth: "300px"
-            }}>
-                <h3>Apply</h3>
-                <div>
-                    <label>Applied Date </label>
-                    <input type="date" placeholder="Enter Date" name="AppliedDate" value={applyDate} onChange={(e) => setApplyDate(e.target.value)} />
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/40 px-4">
+            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl">
+                <h3 className="text-xl font-semibold text-slate-900 mb-4">Apply to company</h3>
+                <label className="block text-sm text-slate-700 mb-2">Applied Date</label>
+                <input
+                    type="date"
+                    value={applyDate}
+                    onChange={(e) => setApplyDate(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+                />
+                <div className="mt-6 flex justify-end gap-3">
+                    <button onClick={onClose} className="rounded-xl border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50">Close</button>
+                    <button onClick={handleSubmit} disabled={!applyDate} className="rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60">Apply</button>
                 </div>
-                <button onClick={onClose}>Close</button>
-                <button onClick={handleSubmit} disabled={!applyDate}>Apply</button>
             </div>
         </div>
     );
@@ -56,8 +46,6 @@ const GetCompanies = () => {
         try {
             const allCompanyList = await api.get("/company/get");
             const myAppliedList = await api.get("/application/get");
-            console.log("Com res=>", allCompanyList.data.data);
-            console.log("MyCom res=>", myAppliedList.data.data);
             setCompanies(allCompanyList.data.data);
             setApplications(myAppliedList.data.data);
         } catch (error) {
@@ -75,47 +63,54 @@ const GetCompanies = () => {
     }, {});
 
     return (
-        <div>
-            <h2>Companies</h2>
-
-            <table border="1" cellPadding="10">
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Company</td>
-                        <td>Contact Name</td>
-                        <td>Contact Email</td>
-                        <td>Contact Phone</td>
-                        <td>Contact Type</td>
-                        <td>Action</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {companies.map((company, index) => {
-                         const hasApplied = applicationsMap[company._id];
-                         return (
-                        <tr key={company._id}>
-                            <td>{index + 1}</td>
-                            <td>{company.companyName}</td>
-                            <td>{company.contactName}</td>
-                            <td>{company.contactEmail}</td>
-                            <td>{company.contactPhone}</td>
-                            <td>{company.contactType}</td>
-                            <td>
-                                {hasApplied ? hasApplied.Status : <button onClick={() => {
-                                    setSelectedCompanyId(company._id);
-                                    setShowPopup(true);
-                                }}>
-                                    Apply
-                                </button>}
-                            </td>
-                        </tr>
-                         )
-                    })}
-                </tbody>
-            </table>
-
-            {/* Popup */}
+        <main className="min-h-screen bg-slate-50 px-4 py-6">
+            <div className="mx-auto max-w-6xl space-y-6">
+                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+                    <h2 className="text-2xl font-semibold text-slate-900">Companies</h2>
+                    <p className="mt-2 text-sm text-slate-600">Browse companies and apply directly.</p>
+                </section>
+                <section className="overflow-x-auto rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead className="bg-slate-50 text-slate-600">
+                            <tr>
+                                {['#','Company','Contact Name','Contact Email','Contact Phone','Type','Action'].map((label) => (
+                                    <th key={label} className="px-4 py-3 text-left font-medium">{label}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200 bg-white">
+                            {companies.map((company, index) => {
+                                const hasApplied = applicationsMap[company._id];
+                                return (
+                                    <tr key={company._id} className="hover:bg-slate-50">
+                                        <td className="px-4 py-4">{index + 1}</td>
+                                        <td className="px-4 py-4">{company.companyName}</td>
+                                        <td className="px-4 py-4">{company.contactName}</td>
+                                        <td className="px-4 py-4">{company.contactEmail}</td>
+                                        <td className="px-4 py-4">{company.contactPhone}</td>
+                                        <td className="px-4 py-4">{company.contactType}</td>
+                                        <td className="px-4 py-4">
+                                            {hasApplied ? (
+                                                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{hasApplied.Status}</span>
+                                            ) : (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedCompanyId(company._id);
+                                                        setShowPopup(true);
+                                                    }}
+                                                    className="rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700"
+                                                >
+                                                    Apply
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </section>
+            </div>
             {showPopup && (
                 <ApplyAtCompany
                     id={selectedCompanyId}
@@ -123,7 +118,7 @@ const GetCompanies = () => {
                     refresh={fetchCompanies}
                 />
             )}
-        </div>
+        </main>
     );
 };
 

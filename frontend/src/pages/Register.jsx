@@ -1,7 +1,6 @@
-import react, { useState } from "react"
+﻿import React, { useState } from "react"
 import api from "../services/api"
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ const Register = () => {
     e.preventDefault();
     try {
       if(!name || !email || !password){
-        // alert("Enter all values");
         setErrorMsg("Enter all values");
         return;
       }
@@ -39,27 +37,49 @@ const Register = () => {
       navigate("/dashboard");
 
     } catch (error) {
-      console.log("Error in register",error.response);
-      const message = error.response.data.message || "Something Went Wrong";
-      // alert(error.response.data.message);
+      const message = error?.response?.data?.message || "Something went wrong";
       setErrorMsg(message);
     }
   };
 
   return(
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" value={name} onChange={handleChange} placeholder="Enter Name" />
-        <input type="text" name="email" value={email} onChange={handleChange} placeholder="Enter Email" />
-        <input type="password" name="password" value={password} onChange={handleChange} placeholder="Enter Password" />
-        <button type="submit">Register</button>
-      </form>
-      {errorMsg && <p style={{color:"red"}}>{errorMsg}</p>}
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+        <h2 className="text-3xl font-semibold text-slate-900 mb-6">Create account</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            value={name}
+            onChange={handleChange}
+            placeholder="Enter Name"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+          />
+          <input
+            type="text"
+            name="email"
+            value={email}
+            onChange={handleChange}
+            placeholder="Enter Email"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+          />
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+            placeholder="Enter Password"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+          />
+          <button type="submit" className="w-full rounded-xl bg-slate-900 px-4 py-3 text-white font-medium hover:bg-slate-700">Register</button>
+        </form>
+        {errorMsg && <p className="mt-4 text-sm text-red-600">{errorMsg}</p>}
+        <p className="mt-6 text-sm text-slate-600">
+          Already have an account? <Link to="/login" className="text-slate-900 font-semibold">Login</Link>
+        </p>
+      </div>
     </div>
   );
-
-
 };
 
 export default Register;
