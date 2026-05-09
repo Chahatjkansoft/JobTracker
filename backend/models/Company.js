@@ -11,7 +11,7 @@ const CompanySchema = new mongoose.Schema({
         lowercase: true,
         match: [/^\S+@\S+\.\S+$/, "Provide Valid Email"],
     },
-    contactPhone: { type: String, required: true },
+    contactPhone: { type: String },
     contactType: { type: String, enum: ["hr", "employee"], default: "hr" },
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

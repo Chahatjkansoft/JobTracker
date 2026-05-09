@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
         });
         console.log("create user",user);
         const token = jwt.sign(
-            {userId:user._id,role:user.role},
+            {userId:user._id,role:user.role,userName:user.name},
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
