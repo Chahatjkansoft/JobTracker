@@ -34,12 +34,15 @@ const Dashboard = () => {
     };
 
     const [loginRole, setLoginRole] = useState("User");
+    const [loginName, setLoginName] = useState("");
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return;
         const decoded = jwtDecode(token);
+        console.log("Decoded data=>", decoded);
         setdecodedData(decoded);
         setLoginRole(decoded.role || "User");
+        setLoginName(decoded.userName || "User");
         fetchMyDashboardData(decoded.userId);
     }, []);
 
@@ -67,9 +70,9 @@ const Dashboard = () => {
             <div className="mx-auto max-w-6xl space-y-6">
                 <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                        <div style={{"display":"none"}}>
                             <h1 className="text-3xl font-semibold text-slate-900">Welcome back</h1>
-                            <p className="text-sm text-slate-500">You are logged in as <strong className="text-slate-900">{loginRole}</strong>.</p>
+                            <p className="text-sm text-slate-500">{loginName}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                             {['Applied','Interview','Rejected','Offer'].map((label) => (
@@ -112,27 +115,71 @@ const Dashboard = () => {
                     </div>
                 </section>
 
-                <section className="overflow-x-auto rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-                    <table className="min-w-full divide-y divide-slate-200 text-sm">
-                        <thead className="bg-slate-50 text-slate-600">
-                            <tr>
-                                {['#','Company','Contact','Status','Updated On','Action'].map((label) => (
-                                    <th key={label} className="px-4 py-3 text-left font-medium">{label}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 bg-white">
-                            {applications.length > 0 ? applications.map((company, index) => (
-                                <tr key={company._id} className="hover:bg-slate-50">
-                                    <td className="px-4 py-4">{index + 1}</td>
-                                    <td className="px-4 py-4">{company.CompanyId.companyName}</td>
-                                    <td className="px-4 py-4">{company.CompanyId.contactName}</td>
-                                    <td className="px-4 py-4">{company.Status}</td>
-                                    <td className="px-4 py-4">{company.AppliedDate}</td>
-                                    <td className="px-4 py-4">
+                <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full divide-y divide-slate-200 text-sm">
+                            <thead className="bg-slate-50 text-slate-600">
+                                <tr>
+                                    {['#','Company','Contact','Status','Updated On','Action'].map((label) => (
+                                        <th key={label} className="px-4 py-3 text-center font-medium">{label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200 bg-white">
+                                {applications.length > 0 ? applications.map((company, index) => (
+                                    <tr key={company._id} className="hover:bg-slate-50">
+                                        <td className="px-4 py-4 text-center">{index + 1}</td>
+                                        <td className="px-4 py-4 text-center">{company.CompanyId.companyName}</td>
+                                        <td className="px-4 py-4 text-center">{company.CompanyId.contactName}</td>
+                                        <td className="px-4 py-4 text-center">{company.Status}</td>
+                                        <td className="px-4 py-4 text-center">{company.AppliedDate}</td>
+                                        <td className="px-4 py-4 text-center">
+                                            <select
+                                                value={company.Status.toLowerCase()}
+                                                className="rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900"
+                                                onChange={(e) => statusChangeHandle(company._id, e)}
+                                            >
+                                                <option value="applied">Applied</option>
+                                                <option value="interview">Interviewed</option>
+                                                <option value="rejected">Rejected</option>
+                                                <option value="offer">Offer</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                )) : (
+                                    <tr>
+                                        <td colSpan="6" className="px-4 py-8 text-center text-slate-500">No data found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden p-6">
+                        {applications.length > 0 ? (
+                            <div className="space-y-4">
+                                {applications.map((company, index) => (
+                                    <div key={company._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
+                                        <div className="flex justify-between items-start">
+                                            <h3 className="font-semibold text-slate-900">{company.CompanyId.companyName}</h3>
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                company.Status.toLowerCase() === 'applied' ? 'bg-blue-100 text-blue-800' :
+                                                company.Status.toLowerCase() === 'interview' ? 'bg-purple-100 text-purple-800' :
+                                                company.Status.toLowerCase() === 'rejected' ? 'bg-red-100 text-red-800' :
+                                                'bg-green-100 text-green-800'
+                                            }`}>
+                                                {company.Status}
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-slate-600 space-y-1">
+                                            <p><span className="font-medium">Contact:</span> {company.CompanyId.contactName}</p>
+                                            <p><span className="font-medium">Applied:</span> {company.AppliedDate}</p>
+                                        </div>
                                         <select
                                             value={company.Status.toLowerCase()}
-                                            className="rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900"
+                                            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 text-sm"
                                             onChange={(e) => statusChangeHandle(company._id, e)}
                                         >
                                             <option value="applied">Applied</option>
@@ -140,15 +187,13 @@ const Dashboard = () => {
                                             <option value="rejected">Rejected</option>
                                             <option value="offer">Offer</option>
                                         </select>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan="6" className="px-4 py-8 text-center text-slate-500">No data found.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-slate-500">No data found.</div>
+                        )}
+                    </div>
                 </section>
             </div>
         </main>

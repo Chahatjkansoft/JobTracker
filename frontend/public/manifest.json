@@ -3,12 +3,12 @@
   "name": "JobTracker",
   "icons": [
     {
-      "src": "/appLogoRounded.png",
+      "src": "/appLogoRound.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/appLogoRounded.png",
+      "src": "/appLogoRound.png",
       "type": "image/png",
       "sizes": "512x512"
     }

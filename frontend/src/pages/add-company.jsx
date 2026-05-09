@@ -18,7 +18,7 @@ const CreateCompany = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (!companyName || !contactEmail || !contactPhone || !contactName) {
+            if (!companyName || !contactEmail  || !contactName) {
                 setErrorMsg("Enter all values");
                 return;
             }

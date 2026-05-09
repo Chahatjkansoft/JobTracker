@@ -69,46 +69,94 @@ const GetCompanies = () => {
                     <h2 className="text-2xl font-semibold text-slate-900">Companies</h2>
                     <p className="mt-2 text-sm text-slate-600">Browse companies and apply directly.</p>
                 </section>
-                <section className="overflow-x-auto rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-                    <table className="min-w-full divide-y divide-slate-200 text-sm">
-                        <thead className="bg-slate-50 text-slate-600">
-                            <tr>
-                                {['#','Company','Contact Name','Contact Email','Contact Phone','Type','Action'].map((label) => (
-                                    <th key={label} className="px-4 py-3 text-left font-medium">{label}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 bg-white">
-                            {companies.map((company, index) => {
-                                const hasApplied = applicationsMap[company._id];
-                                return (
-                                    <tr key={company._id} className="hover:bg-slate-50">
-                                        <td className="px-4 py-4">{index + 1}</td>
-                                        <td className="px-4 py-4">{company.companyName}</td>
-                                        <td className="px-4 py-4">{company.contactName}</td>
-                                        <td className="px-4 py-4">{company.contactEmail}</td>
-                                        <td className="px-4 py-4">{company.contactPhone}</td>
-                                        <td className="px-4 py-4">{company.contactType}</td>
-                                        <td className="px-4 py-4">
-                                            {hasApplied ? (
-                                                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{hasApplied.Status}</span>
-                                            ) : (
+                <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full divide-y divide-slate-200 text-sm">
+                            <thead className="bg-slate-50 text-slate-600">
+                                <tr>
+                                    {['#', 'Company', 'Contact Name', 'Contact Email', 'Contact Phone', 'Type', 'Action'].map((label) => (
+                                        <th key={label} className="px-4 py-3 text-center font-medium">{label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200 bg-white">
+                                {companies.length > 0 ? (companies.map((company, index) => {
+                                    const hasApplied = applicationsMap[company._id];
+                                    return (
+                                        <tr key={company._id} className="hover:bg-slate-50">
+                                            <td className="px-4 py-4 text-center">{index + 1}</td>
+                                            <td className="px-4 py-4 text-center">{company.companyName}</td>
+                                            <td className="px-4 py-4 text-center">{company.contactName}</td>
+                                            <td className="px-4 py-4 text-center">{company.contactEmail}</td>
+                                            <td className="px-4 py-4 text-center">{company.contactPhone}</td>
+                                            <td className="px-4 py-4 text-center">{company.contactType}</td>
+                                            <td className="px-4 py-4 text-center">
+                                                {hasApplied ? (
+                                                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{hasApplied.Status}</span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedCompanyId(company._id);
+                                                            setShowPopup(true);
+                                                        }}
+                                                        className="rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700"
+                                                    >
+                                                        Apply
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" className="px-4 py-8 text-center text-slate-500">No data found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden p-6">
+                        {companies.length > 0 ? (
+                            <div className="space-y-4">
+                                {companies.map((company, index) => {
+                                    const hasApplied = applicationsMap[company._id];
+                                    return (
+                                        <div key={company._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <h3 className="font-semibold text-slate-900 flex-1">{company.companyName}</h3>
+                                                {hasApplied && (
+                                                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700 whitespace-nowrap">{hasApplied.Status}</span>
+                                                )}
+                                            </div>
+                                            <div className="text-sm text-slate-600 space-y-2">
+                                                <p><span className="font-medium">Contact:</span> {company.contactName}</p>
+                                                <p className="break-all"><span className="font-medium">Email:</span> {company.contactEmail}</p>
+                                                <p><span className="font-medium">Phone:</span> {company.contactPhone}</p>
+                                                {company.contactType && <p><span className="font-medium">Type:</span> {company.contactType}</p>}
+                                            </div>
+                                            {!hasApplied ? (
                                                 <button
                                                     onClick={() => {
                                                         setSelectedCompanyId(company._id);
                                                         setShowPopup(true);
                                                     }}
-                                                    className="rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700"
+                                                    className="w-full rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-700 transition"
                                                 >
-                                                    Apply
+                                                    Apply Now
                                                 </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                                            ) : null}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-slate-500">No data found.</div>
+                        )}
+                    </div>
                 </section>
             </div>
             {showPopup && (
