@@ -39,7 +39,6 @@ const Dashboard = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
         const decoded = jwtDecode(token);
-        console.log("Decoded data=>", decoded);
         setdecodedData(decoded);
         setLoginRole(decoded.role || "User");
         setLoginName(decoded.userName || "User");
