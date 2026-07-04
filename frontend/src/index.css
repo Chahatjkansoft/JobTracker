@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  font-family: 'inter';
+  font-weight: 400;
 }
 
 body {
@@ -12,14 +14,15 @@ body {
 
 button,
 input,
+textarea,
 select {
-  @apply font-sans;
+  font-family: inherit;
 }
 
 .spinner {
   width: 18px;
   height: 18px;
-  border: 3px solid white;
+  border: 3px dotted white;
   border-top: 3px solid transparent;
   border-radius: 50%;
   display: inline-block;
@@ -31,4 +34,3 @@ select {
     transform: rotate(360deg);
   }
 }
-

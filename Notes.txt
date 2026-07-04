@@ -14,7 +14,6 @@
 -. admin can import data from excel:- list of companys and can export old data and update it and reupload.
 
 17. admin can see all AND user can see their's rejected company record  
-15. if user not exist (delete from db) and then request of page or api then error, need to handle 
 16. gmail need to verify when registering user (user api to send api) 
 18. much data so, create fixed table and in that infinite scroll to bring data and default 10 records
 19. info tab on every page make it dymnamic and make it component and use it everywhere 
@@ -22,7 +21,7 @@
 22. on pending page need to give option to see rejected companys.
 23. Admin can delete company but what if applications are still there
 24. In Admin, give functionality to import compnays from excel (default pending status).
-
+25. delete functionality for multiple things and on rights basis also see its impacts.
 
 -----------Partial Complete----------
 12. loader work everywhere. (done initialy)
@@ -36,6 +35,7 @@
 13. if admin rejects the request then need a reason to reject the record (done)
 14. admin can see users registered and their info (Done)
 20. when applying to a compnay popup open but navigation UI is apparing up (Done)
+15. if user not exist (delete from db) and then request of page or api then error, need to handle (done with help auth middleware)
 
 
 

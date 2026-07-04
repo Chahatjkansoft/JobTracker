@@ -35,7 +35,7 @@ const GetAllUsers = () => {
                         <table className="w-full divide-y divide-slate-200 text-sm">
                             <thead className="bg-slate-50 text-slate-600">
                                 <tr>
-                                    {['Sr.No', 'Name', 'Email', 'Subscription'].map((label) => (
+                                    {['Sr.No', 'UserName', 'Email', 'Subscription'].map((label) => (
                                         <th key={label} className="px-4 py-3 text-center font-medium">{label}</th>
                                     ))}
                                 </tr>
@@ -44,7 +44,7 @@ const GetAllUsers = () => {
                                 {userData.length > 0 ? userData.map((data, index) => (
                                     <tr key={data._id} className="hover:bg-slate-50">
                                         <td className="px-4 py-4 text-center">{index + 1}</td>
-                                        <td className="px-4 py-4 text-center">{data.name}</td>
+                                        <td className="px-4 py-4 text-center">{data.userName}</td>
                                         <td className="px-4 py-4 text-center">{data.email}</td>
                                         <td className="px-4 py-4 text-center">{data.subscriptionStatus}</td>
                                     </tr>
@@ -63,7 +63,7 @@ const GetAllUsers = () => {
                             <div className="space-y-4">
                                 {userData.map((data, index) => (
                                     <div key={data._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
-                                        <h3 className="font-semibold text-slate-900">{data.name}</h3>
+                                        <h3 className="font-semibold text-slate-900">{data.userName}</h3>
                                         <div className="text-sm text-slate-600 space-y-2">
                                             <p><span className="font-medium">Email:</span> {data.email}</p>
                                             <p><span className="font-medium">Subscription:</span> {data.subscriptionStatus}</p>

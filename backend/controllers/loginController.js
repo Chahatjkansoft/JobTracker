@@ -8,9 +8,11 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Enter all required values" });
     }
     var emailNameData = emailName.trim();
-    
-    var userData = await User.findOne({ $or: [{ email: emailNameData }, 
-      { name: emailNameData }] }).select("+password");
+
+    var userData = await User.findOne({
+      $or: [{ email: emailNameData },
+      { userName: emailNameData }]
+    }).select("+password");
 
     if (userData) {
       var checkPass = await userData.comparePassword(password);
@@ -18,7 +20,7 @@ const loginUser = async (req, res) => {
         return res.status(400).json({ message: "Wrong password" });
       } else {
         const token = jwt.sign(
-          { userId: userData._id, role: userData.role, userName: userData.name },
+          { userId: userData._id, role: userData.role, userName: userData.userName },
           process.env.JWT_SECRET,
           { expiresIn: "7d" }
         );
@@ -28,8 +30,7 @@ const loginUser = async (req, res) => {
           token,
         });
       }
-    } else 
-      {
+    } else {
       return res.status(400).json({ message: "User not found" });
     }
   } catch (error) {
