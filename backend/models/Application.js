@@ -6,6 +6,7 @@ const ApplicationSchema = new mongoose.Schema({
     AppliedDate: { type: Date, required: true },
     Status: { type: String, enum: ["applied", "interview", "rejected", "offer"], required: true, default: "applied" },
     NextAllowedDate: { type: Date },
+    isdeleted: { type: Boolean, default: false }
 },
     {
         timestamps: true

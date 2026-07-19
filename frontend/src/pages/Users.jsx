@@ -4,7 +4,7 @@ import Loader from "../components/Loader"
 
 const GetAllUsers = () => {
     const [userData, setUserData] = useState([]);
-    const [loader, setLoader] = useState(false);
+    const [loader, setLoader] = useState(true);
     useEffect(() => {
         fetchAllUsers();
     }, []);

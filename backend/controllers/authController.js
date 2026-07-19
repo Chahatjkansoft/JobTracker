@@ -1,6 +1,7 @@
 const { model } = require("mongoose");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const profileCont = require("../controllers/profileController");
 
 const registerUser = async (req, res) => {
     try {
@@ -17,6 +18,12 @@ const registerUser = async (req, res) => {
             email,
             password
         });
+
+        const profileData = await profileCont.createProfile({
+            name: user.userName,
+            userId: user._id
+        });
+        if (profileData) { user.isProfileCreated = true; await user.save();}
         user.password = undefined;
         const token = jwt.sign(
             { userId: user._id, role: user.role, userName: user.userName },
@@ -27,7 +34,7 @@ const registerUser = async (req, res) => {
             message: "User Created successful",
             user: user,
             token
-        })
+        });
     }
     catch (error) {
         console.log("Auth=> ", error);

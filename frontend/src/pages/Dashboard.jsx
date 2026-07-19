@@ -1,17 +1,17 @@
 ﻿import React, { useState, useEffect } from "react"
 import api from "../services/api";
-import { jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
+import { useAuth } from "../context/AuthContext"
 
 const Dashboard = () => {
     const [statusCount, setStatusCount] = useState({});
     const [applications, setApplications] = useState([]);
-    const [decodedData, setdecodedData] = useState();
     const [compName, setCompName] = useState("");
     const [status, setstatus] = useState("All");
     const [loginRole, setLoginRole] = useState("User");
     const [loginName, setLoginName] = useState("");
-    const [loader, setLoader] = useState(false);
+    const [loader, setLoader] = useState(true);
+    const { user } = useAuth();
 
     const fetchMyDashboardData = async (userId, status = "All", companyName = "") => {
         try {
@@ -40,21 +40,22 @@ const Dashboard = () => {
             setLoader(false);
         }
     };
+
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const decoded = jwtDecode(token);
-        setdecodedData(decoded);
-        setLoginRole(decoded.role || "User");
-        setLoginName(decoded.userName || "User");
-        fetchMyDashboardData(decoded.userId);
-    }, []);
+        console.log("5");
+        if (!user) return;
+
+        setLoginRole(user.role || "User");
+        setLoginName(user.userName || "User");
+
+        fetchMyDashboardData(user.userId);
+    }, [user]);
 
     const statusChangeHandle = async (Id, e) => {
         try {
             const changeStatus = e.target.value;
             await api.put("/application/updateStatus/" + Id, { status: changeStatus });
-            fetchMyDashboardData(decodedData.userId, status, compName);
+            fetchMyDashboardData(user.userId, status, compName);
         }
         catch (error) {
             console.log("Update status error", error?.response || error);
@@ -63,10 +64,10 @@ const Dashboard = () => {
 
     const handleClick = async (e) => {
         setstatus(e.target.value);
-        fetchMyDashboardData(decodedData.userId, e.target.value, compName);
+        fetchMyDashboardData(user.userId, e.target.value, compName);
     };
     const handleBlur = async (e) => {
-        fetchMyDashboardData(decodedData.userId, status, e.target.value);
+        fetchMyDashboardData(user.userId, status, e.target.value);
     };
 
     if (loader) return <Loader />;

@@ -1,15 +1,19 @@
 ﻿import React, { useState } from "react"
 import api from "../services/api"
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"
 
 const Login = () => {
     const [formData, setFormData] = useState({
-        email: "",
+        emailName: "",
         password: ""
     });
     const { emailName, password } = formData;
     const [errorMsg, setErrorMsg] = useState("");
     const [loader, setLoader] = useState(false);
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
 
     const handleChange = (e) => {
         setFormData({
@@ -31,8 +35,10 @@ const Login = () => {
                 password,
             });
             if (res.data.token) {
-                localStorage.setItem("token", res.data.token);
-                window.location.href = "/dashboard";
+                console.log("1");
+                login(res.data.token);
+                console.log("3");
+                //navigate("/dashboard")
             }
         }
         catch (error) {

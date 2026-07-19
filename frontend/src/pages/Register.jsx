@@ -42,7 +42,6 @@ const Register = () => {
         email,
         password,
       });
-      localStorage.setItem("token", res.data.token);
       login(res.data.token);
       navigate("/dashboard");
 
