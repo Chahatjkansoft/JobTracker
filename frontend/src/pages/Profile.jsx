@@ -1,5 +1,7 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext"
+import Loader from "../components/Loader";
 
 const Profile = () => {
     const [formData, setFormData] = useState({
@@ -8,7 +10,31 @@ const Profile = () => {
     const { name, surName, mobileNo } = formData;
     const [errorMsg, setErrorMsg] = useState("");
     const [loading, setLoading] = useState(false);
-    
+    const [pageLoader, setpageLoader] = useState(false);
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (!user) return;
+        fetchProfileData(user.userId);
+    }, []);
+
+    const fetchProfileData = async (id) => {
+        try {
+            setpageLoader(true);
+            const data = await api.get(`/profile/get/${id}`);
+            if (data.data.data){
+                console.log("Profile Data=>", data);
+                setFormData({name: data.data.data.name , surName: data.data.data.surName, mobileNo: data.data.data.mobileNo})
+            }
+
+        } catch (error) {
+            console.log("Profile load error", error);
+        }
+        finally {
+            setpageLoader(false);
+        }
+    }
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -19,6 +45,7 @@ const Profile = () => {
         
     }
 
+if (pageLoader) return <Loader />;
     return (
         <main className="min-h-screen bg-slate-50 px-4 py-6">
             <div className="mx-auto max-w-2xl rounded-3xl bg-white p-6 shadow-sm border border-slate-200">

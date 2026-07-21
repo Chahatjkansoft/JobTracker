@@ -35,9 +35,7 @@ const Login = () => {
                 password,
             });
             if (res.data.token) {
-                console.log("1");
                 login(res.data.token);
-                console.log("3");
                 //navigate("/dashboard")
             }
         }

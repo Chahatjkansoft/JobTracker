@@ -10,13 +10,14 @@ const Dashboard = () => {
     const [status, setstatus] = useState("All");
     const [loginRole, setLoginRole] = useState("User");
     const [loginName, setLoginName] = useState("");
+    const [sectionLoader, setSectionLoader] = useState(false);
     const [loader, setLoader] = useState(true);
     const { user } = useAuth();
 
-    const fetchMyDashboardData = async (userId, status = "All", companyName = "") => {
+    const fetchMyDashboardData = async (userId, status = "All", companyName = "", pageLoader = true) => {
         try {
             if (!userId) return;
-            setLoader(true);
+            pageLoader ? setLoader(true) : setSectionLoader(true);
             const data = await api.get("/application/get", { params: { Status: status, Name: companyName } });
             setApplications(data.data.data);
             const count = {
@@ -38,11 +39,11 @@ const Dashboard = () => {
         }
         finally {
             setLoader(false);
+            setSectionLoader(false);
         }
     };
 
     useEffect(() => {
-        console.log("5");
         if (!user) return;
 
         setLoginRole(user.role || "User");
@@ -55,7 +56,7 @@ const Dashboard = () => {
         try {
             const changeStatus = e.target.value;
             await api.put("/application/updateStatus/" + Id, { status: changeStatus });
-            fetchMyDashboardData(user.userId, status, compName);
+            fetchMyDashboardData(user.userId, status, compName, false);
         }
         catch (error) {
             console.log("Update status error", error?.response || error);
@@ -64,10 +65,10 @@ const Dashboard = () => {
 
     const handleClick = async (e) => {
         setstatus(e.target.value);
-        fetchMyDashboardData(user.userId, e.target.value, compName);
+        fetchMyDashboardData(user.userId, e.target.value, compName, false);
     };
     const handleBlur = async (e) => {
-        fetchMyDashboardData(user.userId, status, e.target.value);
+        fetchMyDashboardData(user.userId, status, e.target.value, false);
     };
 
     if (loader) return <Loader />;
@@ -122,6 +123,11 @@ const Dashboard = () => {
                 </section>
 
                 <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+                    {sectionLoader && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
+                            <Loader />
+                        </div>
+                    )}
                     {/* Desktop Table View */}
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full divide-y divide-slate-200 text-sm">

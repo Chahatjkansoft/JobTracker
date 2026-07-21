@@ -1,13 +1,15 @@
 const Profile = require("../models/Profile");
 
-const getProfileData = async (res, req) => {
+const getProfileData = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const data = await Profile.findOne({ userId: userId });
+        console.log("req.params=>", req.params);
+        const { id } = req.params;
+        const data = await Profile.findOne({ userId: id })
+            .populate("userId");
+
         if (!data) {
-            return res.status(400).json({ message: "Profile not found" });
+            return res.status(404).json({ message: "Profile not found" });
         }
-        data.populate("userId");
         return res.status(200).json({ message: "Record fetch successful", data: data });
     } catch (error) {
         console.log("Error=>", error);
