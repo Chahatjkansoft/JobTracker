@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs")
 
 const UserSchema = new mongoose.Schema({
-    name: {
+    userName: {
         type: String,
         required: true,
     },
@@ -33,6 +33,8 @@ const UserSchema = new mongoose.Schema({
     subscriptionEndDate: {
         type: Date
     },
+    isProfileCreated: { type: Boolean, default:false },
+    issdeleted: { type: Boolean, default:false },
 },
     {
         timestamps: true

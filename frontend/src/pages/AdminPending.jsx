@@ -4,7 +4,7 @@ import Loader from "../components/Loader";
 
 const GetPendingCompanies = () => {
     const [companyData, setCompanyData] = useState([]);
-    const [loader, setLoader] = useState(false);
+    const [loader, setLoader] = useState(true);
     const fetchPendingCompanies = async () => {
         try {
             setLoader(true);

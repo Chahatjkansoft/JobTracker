@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import api from "../services/api";
 import Loader from "../components/Loader";
-import { jwtDecode } from 'jwt-decode'
+import { useAuth } from "../context/AuthContext"
 
 const ApplyAtCompany = ({ id, onClose, refresh }) => {
     const [applyDate, setApplyDate] = useState("");
@@ -60,18 +60,10 @@ const GetCompanies = () => {
     const [applications, setApplications] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedCompanyId, setSelectedCompanyId] = useState(null);
-    const [loader, setLoader] = useState(false);
-
-    const token = localStorage.getItem('token');
-    let isAdmin = false;
-    if (token) {
-        try {
-            const decoded = jwtDecode(token);
-            isAdmin = decoded?.role?.toLowerCase() === 'admin';
-        } catch (error) {
-            isAdmin = false;
-        }
-    }
+    const [loader, setLoader] = useState(true);
+    const { user } = useAuth();
+        
+    const isAdmin = user?.role?.toLowerCase() === "admin";
 
     const fetchCompanies = async () => {
         try {
@@ -138,7 +130,7 @@ const GetCompanies = () => {
                                                             setShowPopup(true);
                                                         }}
                                                         className="rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700">
-                                                        Applied
+                                                        Apply
                                                     </button>
                                                 )}
                                             </td>) : (<td className="px-4 py-4 text-center">
@@ -188,7 +180,7 @@ const GetCompanies = () => {
                                                     }}
                                                     className="w-full rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-700 transition"
                                                 >
-                                                    Apply Now
+                                                    Apply
                                                 </button>
                                             ) : null : (<button
                                                 className="w-full rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-700 transition"

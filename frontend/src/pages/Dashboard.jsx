@@ -1,22 +1,23 @@
 ﻿import React, { useState, useEffect } from "react"
 import api from "../services/api";
-import { jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
+import { useAuth } from "../context/AuthContext"
 
 const Dashboard = () => {
     const [statusCount, setStatusCount] = useState({});
     const [applications, setApplications] = useState([]);
-    const [decodedData, setdecodedData] = useState();
     const [compName, setCompName] = useState("");
     const [status, setstatus] = useState("All");
     const [loginRole, setLoginRole] = useState("User");
     const [loginName, setLoginName] = useState("");
-    const [loader, setLoader] = useState(false);
+    const [sectionLoader, setSectionLoader] = useState(false);
+    const [loader, setLoader] = useState(true);
+    const { user } = useAuth();
 
-    const fetchMyDashboardData = async (userId, status = "All", companyName = "") => {
+    const fetchMyDashboardData = async (userId, status = "All", companyName = "", pageLoader = true) => {
         try {
             if (!userId) return;
-            setLoader(true);
+            pageLoader ? setLoader(true) : setSectionLoader(true);
             const data = await api.get("/application/get", { params: { Status: status, Name: companyName } });
             setApplications(data.data.data);
             const count = {
@@ -38,23 +39,24 @@ const Dashboard = () => {
         }
         finally {
             setLoader(false);
+            setSectionLoader(false);
         }
     };
+
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const decoded = jwtDecode(token);
-        setdecodedData(decoded);
-        setLoginRole(decoded.role || "User");
-        setLoginName(decoded.userName || "User");
-        fetchMyDashboardData(decoded.userId);
-    }, []);
+        if (!user) return;
+
+        setLoginRole(user.role || "User");
+        setLoginName(user.userName || "User");
+
+        fetchMyDashboardData(user.userId);
+    }, [user]);
 
     const statusChangeHandle = async (Id, e) => {
         try {
             const changeStatus = e.target.value;
             await api.put("/application/updateStatus/" + Id, { status: changeStatus });
-            fetchMyDashboardData(decodedData.userId, status, compName);
+            fetchMyDashboardData(user.userId, status, compName, false);
         }
         catch (error) {
             console.log("Update status error", error?.response || error);
@@ -63,10 +65,10 @@ const Dashboard = () => {
 
     const handleClick = async (e) => {
         setstatus(e.target.value);
-        fetchMyDashboardData(decodedData.userId, e.target.value, compName);
+        fetchMyDashboardData(user.userId, e.target.value, compName, false);
     };
     const handleBlur = async (e) => {
-        fetchMyDashboardData(decodedData.userId, status, e.target.value);
+        fetchMyDashboardData(user.userId, status, e.target.value, false);
     };
 
     if (loader) return <Loader />;
@@ -121,6 +123,11 @@ const Dashboard = () => {
                 </section>
 
                 <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+                    {sectionLoader && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
+                            <Loader />
+                        </div>
+                    )}
                     {/* Desktop Table View */}
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full divide-y divide-slate-200 text-sm">

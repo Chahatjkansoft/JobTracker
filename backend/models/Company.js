@@ -17,7 +17,7 @@ const CompanySchema = new mongoose.Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     source: { type: String, enum: ["admin", "user"], default: "user" },
     rejectReason: { type: String },
-
+    isdeleted: { type: Boolean, default: false }
 },
     {
         timestamps: true
