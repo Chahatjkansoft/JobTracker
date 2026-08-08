@@ -1,134 +1,263 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from "../context/AuthContext"
 
+const sidebarItems = [
+  {
+    name: 'Dashboard',
+    path: '/dashboard',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M3 9.5L12 3l9 6.5v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-11Z" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Companies',
+    path: '/companies',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M4 22h16V12L12 3 4 12v10Z" />
+        <path d="M9 22V12h6v10" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Add Company',
+    path: '/addCompanies',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M12 5v14" />
+        <path d="M5 12h14" />
+      </svg>
+    ),
+  },
+]
+
+const adminItems = [
+  {
+    name: 'Users',
+    path: '/users',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Pending Companies',
+    path: '/pendingCompanies',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M12 2l7 4v6c0 5-3.75 9.74-7 12-3.25-2.26-7-7-7-12V6l7-4Z" />
+        <path d="M12 6v6" />
+        <path d="M12 16h.01" />
+      </svg>
+    ),
+  },
+]
+
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const isAdmin = user?.role?.toLowerCase() === 'admin' || false;
   const userName = user?.userName || 'User';
 
   const handleLogout = () => {
     logout();
+    setIsSidebarOpen(false);
     navigate('/login');
   }
 
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
+  const renderItem = (item) => {
+    const isActive = location.pathname === item.path;
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        onClick={closeSidebar}
+        title={item.name}
+        className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+      >
+        <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
+          {item.icon}
+        </span>
+        {isSidebarOpen && <span>{item.name}</span>}
+      </Link>
+    );
+  }
+
   return (
-    <header className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-sm">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="flex items-center justify-between py-4">
-          {/* Logo */}
-          <Link to="/dashboard" className="flex items-center gap-2 hidden">
-            <span className="text-2xl">📋</span>
-            <span className="text-xl font-semibold text-slate-900 hidden sm:inline">JobTracker</span>
-          </Link>
+    <>
+      <div className="fixed inset-y-0 left-0 z-30 w-20 flex h-screen flex-col items-center justify-between border-r border-slate-200 bg-white/95 px-2 py-4 shadow-sm backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          aria-expanded={isSidebarOpen}
+          aria-label="Open navigation"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        >
+          {isSidebarOpen ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+              <path d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
-              Dashboard
-            </Link>
-            <Link to="/companies" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
-              Companies
-            </Link>
-            <Link to="/addCompanies" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
-              Add Company
-            </Link>
-            {isAdmin && (<>
-              <Link to="/users" className="text-sm font-medium text-yellow-600 hover:text-yellow-700 transition">
-                Users
-              </Link>
-              <Link to="/pendingCompanies" className="text-sm font-medium text-yellow-600 hover:text-yellow-700 transition">
-                Pending Companies
-              </Link>
-            </>
+        <nav className="flex w-full flex-1 flex-col items-center gap-2 overflow-hidden pt-4">
+          {sidebarItems.map(renderItem)}
+          {isAdmin && adminItems.map(renderItem)}
+        </nav>
+
+        <div className="mt-auto flex w-full flex-col items-center gap-2">
+          <Link
+            to="/profile"
+            onClick={closeSidebar}
+            title="Profile"
+            className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${location.pathname === '/profile' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+          >
+            <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${location.pathname === '/profile' ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
+            {isSidebarOpen && (
+              <div className="overflow-hidden text-left">
+                <p className="truncate text-sm font-semibold text-slate-900">{userName}</p>
+                <p className="truncate text-xs text-slate-500">{isAdmin ? 'Admin' : 'User'}</p>
+              </div>
             )}
-          </nav>
+          </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Logout"
+            className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-rose-500 px-3 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400"
+          >
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+            </span>
+            {isSidebarOpen && 'Logout'}
+          </button>
+        </div>
+      </div>
 
-          {/* Desktop Right Section */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="text-right">
-              <Link to="/profile" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition" title='Profile'>
-                <p className="text-sm font-medium text-slate-900">{userName}</p>
-                <p className="text-xs text-slate-500">{isAdmin ? 'Admin' : 'User'}</p>
-              </Link>
+      <div
+        className={`fixed inset-0 z-40 bg-slate-900/40 transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={closeSidebar}
+      />
+
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] overflow-y-auto bg-white shadow-xl border-r border-slate-200 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex min-h-full flex-col justify-between px-4 py-6">
+          <div>
+            <div className="mb-8 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white">📋</span>
+                <div>
+                  <p className="text-lg font-semibold text-slate-900">JobTracker</p>
+                  <p className="text-sm text-slate-500">Navigation</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                aria-label="Close navigation"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+
+            <nav className="space-y-2">
+              {sidebarItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeSidebar}
+                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                  >
+                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
+                      {item.icon}
+                    </span>
+                    {item.name}
+                  </Link>
+                );
+              })}
+              {isAdmin && adminItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeSidebar}
+                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                  >
+                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
+                      {item.icon}
+                    </span>
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <Link
+              to="/profile"
+              onClick={closeSidebar}
+              className={`flex items-center gap-3 rounded-2xl px-3 py-3 transition ${location.pathname === '/profile' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}
             >
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-slate-900">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-slate-900 truncate">{userName}</p>
+                <p className="text-xs text-slate-500">{isAdmin ? 'Admin' : 'User'}</p>
+              </div>
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
               Logout
             </button>
           </div>
-
-          {/* Mobile spacer so the menu button stays right-aligned when the logo is hidden */}
-          <div className="md:hidden flex-1" />
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 hover:bg-slate-100 rounded-lg transition"
-          >
-            <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2 border-t border-slate-200 pt-4">
-            <Link
-              to="/dashboard"
-              onClick={() => setIsMenuOpen(false)}
-              className="block px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/companies"
-              onClick={() => setIsMenuOpen(false)}
-              className="block px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition"
-            >
-              Companies
-            </Link>
-            <Link
-              to="/addCompanies"
-              onClick={() => setIsMenuOpen(false)}
-              className="block px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition"
-            >
-              Add Company
-            </Link>
-            {isAdmin && (<>
-              <Link to="/users" onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition" >
-                Users
-              </Link>
-              <Link to="/pendingCompanies" onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition" >
-                Pending Companies
-              </Link></>
-            )}
-            <div className="border-t border-slate-200 pt-4 mt-4 px-4">
-              <Link to="/profile" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition" title='Profile'>
-                <p className="text-sm font-medium text-slate-900 mb-1">{userName}</p>
-                <p className="text-xs text-slate-500 mb-3">{isAdmin ? 'Admin' : 'User'}</p>
-              </Link>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuOpen(false);
-                }}
-                className="w-full bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-2 rounded-lg transition"
-              >
-                Logout
-              </button>
-            </div>
-          </nav>
-        )}
-      </div>
-    </header>
+      </aside>
+    </>
   )
 }
 

@@ -48,7 +48,7 @@ const moveCompanyToPending = async (id, callBaqckFunc) => {
                 return;
             }
         }
-        const data = await api.put("/company/updateStatus/" + id, { status: "pending", reason });
+        await api.put("/company/updateStatus/" + id, { status: "pending", reason });
         callBaqckFunc();
     } catch (error) {
         console.log("Error=>", error);
@@ -156,7 +156,7 @@ const GetCompanies = () => {
                     <div className="md:hidden p-6">
                         {companies.length > 0 ? (
                             <div className="space-y-4">
-                                {companies.map((company, index) => {
+                                {companies.map((company) => {
                                     const hasApplied = applicationsMap[company._id];
                                     return (
                                         <div key={company._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">

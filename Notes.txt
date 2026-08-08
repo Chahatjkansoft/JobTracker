@@ -23,6 +23,7 @@
 25. delete functionality for multiple things and on rights basis also see its impacts.
 26. user transaction in service for data consistancy
 29. correct the return status all over (ex=> as when password is wrong then send 401 not 400).
+30. for simple db operation doing multiple db operation optimize that (ex=> for simple udpate doing fetch and then update rather direct update)
 
 
 -----------Partial Complete----------
