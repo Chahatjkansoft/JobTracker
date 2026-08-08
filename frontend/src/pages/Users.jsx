@@ -61,7 +61,7 @@ const GetAllUsers = () => {
                     <div className="md:hidden p-6">
                         {userData.length > 0 ? (
                             <div className="space-y-4">
-                                {userData.map((data, index) => (
+                                {userData.map((data) => (
                                     <div key={data._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
                                         <h3 className="font-semibold text-slate-900">{data.userName}</h3>
                                         <div className="text-sm text-slate-600 space-y-2">

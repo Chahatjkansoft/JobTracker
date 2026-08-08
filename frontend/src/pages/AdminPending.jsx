@@ -90,7 +90,7 @@ const GetPendingCompanies = () => {
                     <div className="md:hidden p-6">
                         {companyData.length > 0 ? (
                             <div className="space-y-4">
-                                {companyData.map((data, index) => (
+                                {companyData.map((data) => (
                                     <div key={data._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
                                         <h3 className="font-semibold text-slate-900">{data.companyName}</h3>
                                         <div className="text-sm text-slate-600 space-y-2">

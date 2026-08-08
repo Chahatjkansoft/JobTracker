@@ -8,7 +8,7 @@ const Dashboard = () => {
     const [applications, setApplications] = useState([]);
     const [compName, setCompName] = useState("");
     const [status, setstatus] = useState("All");
-    const [loginRole, setLoginRole] = useState("User");
+    // const [loginRole, setLoginRole] = useState("User");
     const [loginName, setLoginName] = useState("");
     const [sectionLoader, setSectionLoader] = useState(false);
     const [loader, setLoader] = useState(true);
@@ -28,7 +28,7 @@ const Dashboard = () => {
             };
             data.data.data.forEach((item) => {
                 const itemStatus = item.Status?.toLowerCase();
-                if (count.hasOwnProperty(itemStatus)) {
+                if (count[itemStatus] !== undefined) {
                     count[itemStatus] += 1;
                 }
             });
@@ -46,7 +46,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (!user) return;
 
-        setLoginRole(user.role || "User");
+        // setLoginRole(user.role || "User");
         setLoginName(user.userName || "User");
 
         fetchMyDashboardData(user.userId);
@@ -172,7 +172,7 @@ const Dashboard = () => {
                     <div className="md:hidden p-6">
                         {applications.length > 0 ? (
                             <div className="space-y-4">
-                                {applications.map((company, index) => (
+                                {applications.map((company) => (
                                     <div key={company._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
                                         <div className="flex justify-between items-start">
                                             <h3 className="font-semibold text-slate-900">{company.CompanyId.companyName}</h3>

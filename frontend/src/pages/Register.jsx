@@ -46,7 +46,6 @@ const Register = () => {
       navigate("/dashboard");
 
     } catch (error) {
-      debugger;
       const message = error?.response?.data?.message || "Something went wrong";
       setErrorMsg(message);
     }
