@@ -77,33 +77,36 @@ const Navbar = () => {
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-  const renderItem = (item) => {
-    const isActive = location.pathname === item.path;
-    return (
-      <Link
-        key={item.path}
-        to={item.path}
-        onClick={closeSidebar}
-        title={item.name}
-        className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-      >
-        <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
-          {item.icon}
-        </span>
-        {isSidebarOpen && <span>{item.name}</span>}
-      </Link>
-    );
-  }
+  // const renderItem = (item) => {
+  //   const isActive = location.pathname === item.path;
+  //   return (
+  //     <Link
+  //       key={item.path}
+  //       to={item.path}
+  //       onClick={closeSidebar}
+  //       title={item.name}
+  //       className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+  //     >
+  //       <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
+  //         {item.icon}
+  //       </span>
+  //       {isSidebarOpen && <span>{item.name}</span>}
+  //     </Link>
+  //   );
+  // }
 
   return (
     <>
-      <div className="fixed inset-y-0 left-0 z-30 w-20 flex h-screen flex-col items-center justify-between border-r border-slate-200 bg-white/95 px-2 py-4 shadow-sm backdrop-blur-sm">
+      <div className="fixed top-4 left-4 z-30 rounded-2xl border border-slate-200 bg-white/95 p-1 shadow-sm backdrop-blur-sm"
+      // className="fixed inset-y-0 left-0 z-30 w-20 flex h-screen flex-col items-center justify-between border-r border-slate-200 bg-white/95 px-2 py-4 shadow-sm backdrop-blur-sm"
+      >
         <button
           type="button"
           onClick={toggleSidebar}
           aria-expanded={isSidebarOpen}
           aria-label="Open navigation"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        // className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
         >
           {isSidebarOpen ? (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
@@ -116,7 +119,7 @@ const Navbar = () => {
           )}
         </button>
 
-        <nav className="flex w-full flex-1 flex-col items-center gap-2 overflow-hidden pt-4">
+        {/* <nav className="flex w-full flex-1 flex-col items-center gap-2 overflow-hidden pt-4">
           {sidebarItems.map(renderItem)}
           {isAdmin && adminItems.map(renderItem)}
         </nav>
@@ -157,7 +160,7 @@ const Navbar = () => {
             </span>
             {isSidebarOpen && 'Logout'}
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div

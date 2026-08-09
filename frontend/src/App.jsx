@@ -13,7 +13,9 @@ import { useAuth } from './context/AuthContext.jsx'
 const ProtectedLayout = ({ children }) => (
   <>
     <Navbar />
-    <div className="pl-20">{children}</div>
+    <div 
+    // className="pl-20"
+    >{children}</div>
   </>
 );
 
