@@ -13,7 +13,7 @@ import { useAuth } from './context/AuthContext.jsx'
 const ProtectedLayout = ({ children }) => (
   <>
     <Navbar />
-    <div className="pl-20">{children}</div>
+    <div className="ml-14 md:ml-[68px]">{children}</div>
   </>
 );
 
