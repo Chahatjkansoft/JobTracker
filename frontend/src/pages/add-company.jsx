@@ -19,7 +19,7 @@ const CreateCompany = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (!companyName || !contactEmail  || !contactName) {
+            if (!companyName || !contactEmail || !contactName) {
                 setErrorMsg("Enter all values");
                 return;
             }
@@ -48,48 +48,48 @@ const CreateCompany = () => {
             <div className="mx-auto max-w-[820px]">
                 <PageHeader title="Add company" description="Keep a record of companies and their contact details." />
                 <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_14px_40px_rgba(41,72,128,0.06)] sm:p-8">
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                    <input
-                        type="text"
-                        placeholder="Enter Company Name"
-                        onChange={handleChange}
-                        value={companyName}
-                        name="companyName"
-                        className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter Employee Name"
-                        onChange={handleChange}
-                        value={contactName}
-                        name="contactName"
-                        className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter Employee Email"
-                        onChange={handleChange}
-                        value={contactEmail}
-                        name="contactEmail"
-                        className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter Employee Phone"
-                        onChange={handleChange}
-                        value={contactPhone}
-                        name="contactPhone"
-                        className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
-                    />
-                    <button
-                        disabled={loading}
-                        type="submit"
-                        className="w-full rounded-lg bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-200 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
-                    >
-                        {loading ? "Submitting..." : "Submit"}
-                    </button>
-                </form>
-                {errorMsg && <p className="mt-5 text-sm text-blue-600">{errorMsg}</p>}
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <input
+                            type="text"
+                            placeholder="Enter Company Name"
+                            onChange={handleChange}
+                            value={companyName}
+                            name="companyName"
+                            className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Enter Employee Name"
+                            onChange={handleChange}
+                            value={contactName}
+                            name="contactName"
+                            className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Enter Employee Email"
+                            onChange={handleChange}
+                            value={contactEmail}
+                            name="contactEmail"
+                            className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Enter Employee Phone"
+                            onChange={handleChange}
+                            value={contactPhone}
+                            name="contactPhone"
+                            className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none"
+                        />
+                        <button
+                            disabled={loading}
+                            type="submit"
+                            className="w-full rounded-lg bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-200 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                        >
+                            {loading ? "Submitting..." : "Submit"}
+                        </button>
+                    </form>
+                    {errorMsg && <p className="mt-5 text-sm text-blue-600">{errorMsg}</p>}
                 </section>
             </div>
         </main>

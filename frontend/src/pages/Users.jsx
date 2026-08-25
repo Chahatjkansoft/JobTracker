@@ -55,24 +55,6 @@ const GetAllUsers = () => {
                         </table>
                     </div>
 
-                    {/* Mobile Card View removed for the web-only interface. */}
-                    <div className="hidden">
-                        {userData.length > 0 ? (
-                            <div className="space-y-4">
-                                {userData.map((data) => (
-                                    <div key={data._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
-                                        <h3 className="font-semibold text-slate-900">{data.userName}</h3>
-                                        <div className="text-sm text-slate-600 space-y-2">
-                                            <p><span className="font-medium">Email:</span> {data.email}</p>
-                                            <p><span className="font-medium">Subscription:</span> {data.subscriptionStatus}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-slate-500">No data found.</div>
-                        )}
-                    </div>
                 </section>
             </div>
         </main>

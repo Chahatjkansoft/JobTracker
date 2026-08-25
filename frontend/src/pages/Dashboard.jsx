@@ -9,8 +9,6 @@ const Dashboard = () => {
     const [applications, setApplications] = useState([]);
     const [compName, setCompName] = useState("");
     const [status, setstatus] = useState("All");
-    // const [loginRole, setLoginRole] = useState("User");
-    const [loginName, setLoginName] = useState("");
     const [sectionLoader, setSectionLoader] = useState(false);
     const [loader, setLoader] = useState(true);
     const { user } = useAuth();
@@ -47,9 +45,6 @@ const Dashboard = () => {
     useEffect(() => {
         if (!user) return;
 
-        // setLoginRole(user.role || "User");
-        setLoginName(user.userName || "User");
-
         fetchMyDashboardData(user.userId);
     }, [user]);
 
@@ -79,10 +74,6 @@ const Dashboard = () => {
                 <PageHeader title="Application overview" description="Track your job search activity and progress." />
                 <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_14px_40px_rgba(41,72,128,0.06)] sm:p-6">
                     <div className="flex items-center justify-between gap-3">
-                        <div style={{ "display": "none" }}>
-                            <h1 className="text-3xl font-semibold text-slate-900">Welcome back</h1>
-                            <p className="text-sm text-slate-500">{loginName}</p>
-                        </div>
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
                             {['Applied', 'Interview', 'Rejected', 'Offer'].map((label) => (
                                 <div key={label} className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-3 text-center sm:min-w-[120px] sm:p-4">
@@ -170,43 +161,6 @@ const Dashboard = () => {
                         </table>
                     </div>
 
-                    {/* Mobile Card View removed for the web-only interface. */}
-                    <div className="hidden">
-                        {applications.length > 0 ? (
-                            <div className="space-y-4">
-                                {applications.map((company) => (
-                                    <div key={company._id} className="rounded-2xl border border-slate-300 bg-slate-50 p-4 space-y-3">
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="font-semibold text-slate-900">{company.CompanyId.companyName}</h3>
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${company.Status.toLowerCase() === 'applied' ? 'bg-blue-100 text-blue-800' :
-                                                company.Status.toLowerCase() === 'interview' ? 'bg-purple-100 text-purple-800' :
-                                                    company.Status.toLowerCase() === 'rejected' ? 'bg-red-100 text-red-800' :
-                                                        'bg-green-100 text-green-800'
-                                                }`}>
-                                                {company.Status}
-                                            </span>
-                                        </div>
-                                        <div className="text-sm text-slate-600 space-y-1">
-                                            <p><span className="font-medium">Contact:</span> {company.CompanyId.contactName}</p>
-                                            <p><span className="font-medium">Applied:</span> {company.AppliedDate}</p>
-                                        </div>
-                                        <select
-                                            value={company.Status.toLowerCase()}
-                                            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 text-sm"
-                                            onChange={(e) => statusChangeHandle(company._id, e)}
-                                        >
-                                            <option value="applied">Applied</option>
-                                            <option value="interview">Interviewed</option>
-                                            <option value="rejected">Rejected</option>
-                                            <option value="offer">Offer</option>
-                                        </select>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-slate-500">No data found.</div>
-                        )}
-                    </div>
                 </section>
             </div>
         </main>
