@@ -2,6 +2,7 @@
 import api from "../services/api";
 import Loader from "../components/Loader";
 import { useAuth } from "../context/AuthContext"
+import PageHeader from "../components/PageHeader";
 
 const ApplyAtCompany = ({ id, onClose, refresh }) => {
     const [applyDate, setApplyDate] = useState("");
@@ -92,20 +93,17 @@ const GetCompanies = () => {
     if (loader) return <Loader />;
 
     return (
-        <main className="min-h-screen bg-slate-50 px-4 py-6">
-            <div className="mx-auto max-w-6xl space-y-6">
-                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-                    <h2 className="text-2xl font-semibold text-slate-900">Companies</h2>
-                    <p className="mt-2 text-sm text-slate-600">Browse companies and contact details.</p>
-                </section>
-                <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+        <main className="min-h-screen bg-[#f7f9fc] px-4 pb-8 pt-24 sm:px-6 md:px-10 md:pb-12 md:pt-32">
+            <div className="mx-auto max-w-[1200px] space-y-5 md:space-y-7">
+                <PageHeader title="Companies" description="Browse companies and contact details." />
+                <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_14px_40px_rgba(41,72,128,0.06)]">
                     {/* Desktop Table View */}
-                    <div className="hidden md:block overflow-x-auto">
-                        <table className="w-full divide-y divide-slate-200 text-sm">
-                            <thead className="bg-slate-50 text-slate-600">
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[900px] divide-y divide-slate-200 text-sm">
+                            <thead className="bg-slate-50 text-slate-400">
                                 <tr>
                                     {['#', 'Company', 'Contact Name', 'Contact Email', 'Contact Phone', 'Type', 'Action'].map((label) => (
-                                        <th key={label} className="px-4 py-3 text-center font-medium">{label}</th>
+                                        <th key={label} className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide">{label}</th>
                                     ))}
                                 </tr>
                             </thead>
@@ -113,13 +111,13 @@ const GetCompanies = () => {
                                 {companies.length > 0 ? (companies.map((company, index) => {
                                     const hasApplied = applicationsMap[company._id];
                                     return (
-                                        <tr key={company._id} className="hover:bg-slate-50">
-                                            <td className="px-4 py-4 text-center">{index + 1}</td>
-                                            <td className="px-4 py-4 text-center">{company.companyName}</td>
-                                            <td className="px-4 py-4 text-center">{company.contactName}</td>
-                                            <td className="px-4 py-4 text-center">{company.contactEmail}</td>
-                                            <td className="px-4 py-4 text-center">{company.contactPhone}</td>
-                                            <td className="px-4 py-4 text-center">{company.contactType}</td>
+                                        <tr key={company._id} className="text-slate-600 hover:bg-blue-50/30">
+                                            <td className="px-5 py-4">{index + 1}</td>
+                                            <td className="px-5 py-4 font-semibold text-slate-800">{company.companyName}</td>
+                                            <td className="px-5 py-4">{company.contactName}</td>
+                                            <td className="px-5 py-4">{company.contactEmail}</td>
+                                            <td className="px-5 py-4">{company.contactPhone}</td>
+                                            <td className="px-5 py-4">{company.contactType}</td>
                                             {!isAdmin ? (<td className="px-4 py-4 text-center">
                                                 {hasApplied ? (
                                                     <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{hasApplied.Status}</span>
@@ -152,8 +150,8 @@ const GetCompanies = () => {
                         </table>
                     </div>
 
-                    {/* Mobile Card View */}
-                    <div className="md:hidden p-6">
+                    {/* Mobile Card View removed for the web-only interface. */}
+                    <div className="hidden">
                         {companies.length > 0 ? (
                             <div className="space-y-4">
                                 {companies.map((company) => {

@@ -2,6 +2,7 @@
 import api from "../services/api";
 import Loader from "../components/Loader";
 import { useAuth } from "../context/AuthContext"
+import PageHeader from "../components/PageHeader";
 
 const Dashboard = () => {
     const [statusCount, setStatusCount] = useState({});
@@ -73,30 +74,31 @@ const Dashboard = () => {
 
     if (loader) return <Loader />;
     return (
-        <main className="min-h-screen bg-slate-50 px-4 py-6">
-            <div className="mx-auto max-w-6xl space-y-6">
-                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <main className="min-h-screen bg-[#f7f9fc] px-4 pb-8 pt-24 sm:px-6 md:px-10 md:pb-12 md:pt-32">
+            <div className="mx-auto max-w-[1200px] space-y-5 md:space-y-7">
+                <PageHeader title="Application overview" description="Track your job search activity and progress." />
+                <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_14px_40px_rgba(41,72,128,0.06)] sm:p-6">
+                    <div className="flex items-center justify-between gap-3">
                         <div style={{ "display": "none" }}>
                             <h1 className="text-3xl font-semibold text-slate-900">Welcome back</h1>
                             <p className="text-sm text-slate-500">{loginName}</p>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
                             {['Applied', 'Interview', 'Rejected', 'Offer'].map((label) => (
-                                <div key={label} className="rounded-2xl bg-slate-50 p-4 text-center">
-                                    <div className="text-sm text-slate-500">{label}</div>
-                                    <div className="mt-2 text-2xl font-semibold text-slate-900">{statusCount[label.toLowerCase()] || 0}</div>
+                                <div key={label} className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-3 text-center sm:min-w-[120px] sm:p-4">
+                                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</div>
+                                    <div className="mt-2 text-2xl font-bold text-slate-800">{statusCount[label.toLowerCase()] || 0}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex flex-wrap gap-3 items-center">
+                <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_14px_40px_rgba(41,72,128,0.06)] sm:p-6">
+                    <div className="flex flex-col items-stretch justify-between gap-4 md:flex-row md:items-center">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                             {['All', 'applied', 'interview', 'rejected', 'offer'].map((item) => (
-                                <label key={item} className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                                <label key={item} className="inline-flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-4 py-2 text-sm text-slate-600">
                                     <input
                                         type="radio"
                                         className="h-4 w-4 text-slate-900"
@@ -109,12 +111,12 @@ const Dashboard = () => {
                                 </label>
                             ))}
                         </div>
-                        <div className="max-w-xs">
+                        <div className="w-full md:max-w-xs">
                             <input
                                 type="text"
                                 onBlur={handleBlur}
                                 onChange={(e) => setCompName(e.target.value)}
-                                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 focus:border-slate-700 focus:outline-none"
+                                className="w-full rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-blue-300 focus:outline-none"
                                 value={compName}
                                 placeholder="Filter by company name"
                             />
@@ -122,15 +124,15 @@ const Dashboard = () => {
                     </div>
                 </section>
 
-                <section className="rounded-3xl bg-white shadow-sm border border-slate-200">
+                <section className="relative rounded-2xl border border-slate-100 bg-white shadow-[0_14px_40px_rgba(41,72,128,0.06)]">
                     {sectionLoader && (
                         <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
                             <Loader />
                         </div>
                     )}
                     {/* Desktop Table View */}
-                    <div className="hidden md:block overflow-x-auto">
-                        <table className="w-full divide-y divide-slate-200 text-sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[760px] divide-y divide-slate-200 text-sm">
                             <thead className="bg-slate-50 text-slate-600">
                                 <tr>
                                     {['#', 'Company', 'Contact', 'Status', 'Updated On', 'Action'].map((label) => (
@@ -168,8 +170,8 @@ const Dashboard = () => {
                         </table>
                     </div>
 
-                    {/* Mobile Card View */}
-                    <div className="md:hidden p-6">
+                    {/* Mobile Card View removed for the web-only interface. */}
+                    <div className="hidden">
                         {applications.length > 0 ? (
                             <div className="space-y-4">
                                 {applications.map((company) => (

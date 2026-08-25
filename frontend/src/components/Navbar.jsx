@@ -1,267 +1,45 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useState } from 'react'
-import { useAuth } from "../context/AuthContext"
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-const sidebarItems = [
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-        <path d="M3 9.5L12 3l9 6.5v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-11Z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Companies',
-    path: '/companies',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-        <path d="M4 22h16V12L12 3 4 12v10Z" />
-        <path d="M9 22V12h6v10" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Add Company',
-    path: '/addCompanies',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-        <path d="M12 5v14" />
-        <path d="M5 12h14" />
-      </svg>
-    ),
-  },
+const navigationItems = [
+  { name: 'Dashboard', path: '/dashboard', icon: 'grid' },
+  { name: 'Companies', path: '/companies', icon: 'briefcase' },
+  { name: 'Add Company', path: '/addCompanies', icon: 'plus' },
 ]
-
 const adminItems = [
-  {
-    name: 'Users',
-    path: '/users',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Pending Companies',
-    path: '/pendingCompanies',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-        <path d="M12 2l7 4v6c0 5-3.75 9.74-7 12-3.25-2.26-7-7-7-12V6l7-4Z" />
-        <path d="M12 6v6" />
-        <path d="M12 16h.01" />
-      </svg>
-    ),
-  },
+  { name: 'Users', path: '/users', icon: 'users' },
+  { name: 'Pending Companies', path: '/pendingCompanies', icon: 'clock' },
 ]
+const Icon = ({ name, size = 'h-5 w-5' }) => {
+  const paths = {
+    grid: <><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></>,
+    briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" /></>,
+    plus: <><path d="M12 5v14M5 12h14" /></>,
+    users: <><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M16 3.13a4 4 0 0 1 0 7.75M18 15h1a3 3 0 0 1 3 3v1" /></>,
+    clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+    user: <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
+    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></>,
+    search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    logout: <><path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-5" /></>,
+  }
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={size}>{paths[name]}</svg>
+}
+const NavItem = ({ item, active }) => <Link to={item.path} title={item.name} aria-label={item.name} className={`group relative flex h-12 w-12 items-center justify-center rounded-xl transition ${active ? 'bg-blue-50 text-blue-600' : 'text-slate-300 hover:bg-slate-50 hover:text-slate-600'}`}><Icon name={item.icon} /><span className="pointer-events-none absolute left-14 z-30 hidden whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-xs text-white shadow-lg group-hover:block">{item.name}</span></Link>
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { user, logout } = useAuth();
-  const isAdmin = user?.role?.toLowerCase() === 'admin' || false;
-  const userName = user?.userName || 'User';
-
-  const handleLogout = () => {
-    logout();
-    setIsSidebarOpen(false);
-    navigate('/login');
-  }
-
-  const closeSidebar = () => setIsSidebarOpen(false);
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
-
-  // const renderItem = (item) => {
-  //   const isActive = location.pathname === item.path;
-  //   return (
-  //     <Link
-  //       key={item.path}
-  //       to={item.path}
-  //       onClick={closeSidebar}
-  //       title={item.name}
-  //       className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-  //     >
-  //       <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
-  //         {item.icon}
-  //       </span>
-  //       {isSidebarOpen && <span>{item.name}</span>}
-  //     </Link>
-  //   );
-  // }
-
-  return (
-    <>
-      <div className="fixed top-4 left-4 z-30 rounded-2xl border border-slate-200 bg-white/95 p-1 shadow-sm backdrop-blur-sm"
-      // className="fixed inset-y-0 left-0 z-30 w-20 flex h-screen flex-col items-center justify-between border-r border-slate-200 bg-white/95 px-2 py-4 shadow-sm backdrop-blur-sm"
-      >
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          aria-expanded={isSidebarOpen}
-          aria-label="Open navigation"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
-        // className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
-        >
-          {isSidebarOpen ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-
-        {/* <nav className="flex w-full flex-1 flex-col items-center gap-2 overflow-hidden pt-4">
-          {sidebarItems.map(renderItem)}
-          {isAdmin && adminItems.map(renderItem)}
-        </nav>
-
-        <div className="mt-auto flex w-full flex-col items-center gap-2">
-          <Link
-            to="/profile"
-            onClick={closeSidebar}
-            title="Profile"
-            className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${location.pathname === '/profile' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-          >
-            <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${location.pathname === '/profile' ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </span>
-            {isSidebarOpen && (
-              <div className="overflow-hidden text-left">
-                <p className="truncate text-sm font-semibold text-slate-900">{userName}</p>
-                <p className="truncate text-xs text-slate-500">{isAdmin ? 'Admin' : 'User'}</p>
-              </div>
-            )}
-          </Link>
-          <button
-            type="button"
-            onClick={handleLogout}
-            title="Logout"
-            className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-rose-500 px-3 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400"
-          >
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <path d="M16 17l5-5-5-5" />
-                <path d="M21 12H9" />
-              </svg>
-            </span>
-            {isSidebarOpen && 'Logout'}
-          </button>
-        </div> */}
-      </div>
-
-      <div
-        className={`fixed inset-0 z-40 bg-slate-900/40 transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-        onClick={closeSidebar}
-      />
-
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] overflow-y-auto bg-white shadow-xl border-r border-slate-200 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex min-h-full flex-col justify-between px-4 py-6">
-          <div>
-            <div className="mb-8 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white">📋</span>
-                <div>
-                  <p className="text-lg font-semibold text-slate-900">JobTracker</p>
-                  <p className="text-sm text-slate-500">Navigation</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={toggleSidebar}
-                aria-label="Close navigation"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                  <path d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <nav className="space-y-2">
-              {sidebarItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={closeSidebar}
-                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-                  >
-                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
-                      {item.icon}
-                    </span>
-                    {item.name}
-                  </Link>
-                );
-              })}
-              {isAdmin && adminItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={closeSidebar}
-                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-                  >
-                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${isActive ? 'bg-slate-200 text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>
-                      {item.icon}
-                    </span>
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <Link
-              to="/profile"
-              onClick={closeSidebar}
-              className={`flex items-center gap-3 rounded-2xl px-3 py-3 transition ${location.pathname === '/profile' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}
-            >
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-slate-900">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-slate-900 truncate">{userName}</p>
-                <p className="text-xs text-slate-500">{isAdmin ? 'Admin' : 'User'}</p>
-              </div>
-            </Link>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <path d="M16 17l5-5-5-5" />
-                <path d="M21 12H9" />
-              </svg>
-              Logout
-            </button>
-          </div>
-        </div>
-      </aside>
-    </>
-  )
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
+  const isAdmin = user?.role?.toLowerCase() === 'admin'
+  const userName = user?.userName || 'User'
+  const handleLogout = () => { logout(); navigate('/login') }
+  return <>
+    <aside className="fixed inset-y-0 left-0 z-20 flex w-14 flex-col items-center border-r border-slate-100 bg-white py-4 md:w-[68px] md:py-6">
+      <Link to="/dashboard" aria-label="JobTracker home" className="mb-8 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 text-white shadow-md shadow-blue-100 md:mb-14"><Icon name="briefcase" size="h-4 w-4" /></Link>
+      <nav className="flex flex-col items-center gap-2 md:gap-3">{navigationItems.map((item) => <NavItem key={item.path} item={item} active={location.pathname === item.path} />)}{isAdmin && adminItems.map((item) => <NavItem key={item.path} item={item} active={location.pathname === item.path} />)}</nav>
+      <div className="mt-auto flex flex-col items-center gap-3"><NavItem item={{ name: 'Profile', path: '/profile', icon: 'user' }} active={location.pathname === '/profile'} /><button type="button" onClick={handleLogout} title="Log out" aria-label="Log out" className="flex h-12 w-12 items-center justify-center rounded-xl text-slate-300 transition hover:bg-rose-50 hover:text-rose-500"><Icon name="logout" /></button></div>
+    </aside>
+    <header className="fixed left-14 right-0 top-0 z-10 flex h-[72px] items-center justify-between gap-3 border-b border-slate-100 bg-white/95 px-4 backdrop-blur md:left-[68px] md:h-[88px] md:px-10"><div className="min-w-0"><p className="truncate text-base font-bold text-slate-800 md:text-xl">Welcome, {userName}</p><p className="mt-1 text-[11px] text-slate-400 md:text-xs">Tuesday, 25 August 2026</p></div><div className="flex shrink-0 items-center gap-3 md:gap-5"><label className="flex h-9 w-32 items-center gap-2 rounded-lg bg-slate-50 px-3 text-slate-400 sm:w-48 md:h-10 md:w-64 md:gap-3 md:px-4"><Icon name="search" size="h-4 w-4" /><input aria-label="Search" className="w-full min-w-0 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm" placeholder="Search" /></label><button type="button" aria-label="Notifications" className="relative text-slate-300 transition hover:text-blue-500"><Icon name="bell" /><span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-blue-500 ring-2 ring-white" /></button><Link to="/profile" aria-label="Open profile" className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 text-sm font-bold text-white shadow-sm md:h-10 md:w-10">{userName.slice(0, 1).toUpperCase()}</Link></div></header>
+  </>
 }
-
 export default Navbar
