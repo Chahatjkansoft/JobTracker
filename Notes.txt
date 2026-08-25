@@ -24,7 +24,7 @@
 26. user transaction in service for data consistancy
 29. correct the return status all over (ex=> as when password is wrong then send 401 not 400).
 30. for simple db operation doing multiple db operation optimize that (ex=> for simple udpate doing fetch and then update rather direct update)
-
+31. when user role open admins pages from URL then there is issue.
 
 -----------Partial Complete----------
 12. loader work everywhere. (done initialy)
