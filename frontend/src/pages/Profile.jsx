@@ -100,7 +100,7 @@ const Profile = () => {
                                 <input type="text" name="name" value={name} onChange={handleChange} placeholder="Your first name" required className={fieldStyles} />
                             </label>
                             <label className="text-sm font-semibold text-slate-700">
-                                Nick Name
+                                User Name
                                 <input type="text" name="userName" value={userName} onChange={handleChange} placeholder="Your username" required className={fieldStyles} />
                             </label>
                             <label className="text-sm font-semibold text-slate-700">
